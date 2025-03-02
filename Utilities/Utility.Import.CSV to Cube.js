@@ -4,6 +4,7 @@ function pre() {
     script.log('process pre-execution parameters parsed.')
     script.prompt('CSV file path/name (include .csv extension)', 'filename', 'Exports/example.csv')
     script.prompt('Cube Name', 'cubeName', '')
+    script.prompt('Wipe entire cube before import? (0 = no, 1 = yes)', 'shouldWipeCube', '0');
 }
 
 function begin() {
@@ -30,8 +31,10 @@ function begin() {
     let cleaned_dimensions = dimensions.map(i => i.name.toLowerCase().replace(' ', '_'))
 
     // Optional cube.wipe here
-    console.log(`Wiping part of ${cubeName} cube`)
-    cube.wipe(cubeName, 'Forecast', '', '', '', '', '')
+    if (shouldWipeCube == 1 || shouldWipeCube == '1') {
+        console.log(`Wiping the ${cubeName} cube`)
+        cube.wipe(cubeName, ...cleaned_dimensions.map(() => ''))
+    }
 
     let checked_if_columns_match = false
     let i = 0;
